@@ -71,8 +71,26 @@ const message = (reporter.message.windows as NameTable) ?? reporter.message;
         <Code wrap lang="css" theme={theme} code={`@import("${CDNs[0]}/result.css") `} />
     </span>
     <blockquote class="text-xs py-4 text-rose-600">
-        🔒 公共 CDN每月只提供有限流量的字体服务，不保证稳定性，建议自行部署。
-        <br />
+        <div class="flex gap-4 mb-4">
+            <a href={'https://www.npmjs.com/package/@chinese-fonts/' + font} target="_blank">
+                <img
+                    src={`https://img.shields.io/npm/unpacked-size/@chinese-fonts/${font}?label=NPM&labelColor=c40000&color=fafafa`}
+                    alt="NPM link"
+                />
+            </a>
+            <a href={'https://unpkg.com/@chinese-fonts/' + font + '/dist/'} target="_blank">
+                <img src={`https://img.shields.io/badge/UNPKG-${font}-purple`} alt="unpkg link" />
+            </a>
+            <a href={'https://www.jsdelivr.com/package/npm/@chinese-fonts/' + font} target="_blank">
+                <img
+                    src={'https://data.jsdelivr.com/v1/package/npm/@chinese-fonts/' +
+                        font +
+                        '/badge'}
+                    alt="jsdelivt link"
+                />
+            </a>
+        </div>
+
         ⏺️ 使用字体前请遵守相关授权信息，使用字体的项目必须标注字体名称、来源信息！
         <br />
         <a href="/font-list.json" class="text-green-600"> 🥪 这里是提供所有字体CSS的接口</a>

@@ -86,6 +86,21 @@ article {
 }
 ```
 
+### 采用 CDN 引入
+
+如果你不想自己去构建字体，那么可以使用在线的字体，这样可以节省很多时间。网络上提供有非常多的 NPM CDN 可供使用，使用方式具体参考官方写法。[Unpkg](https://www.unpkg.com/)、[jsDelivr](https://www.jsdelivr.com)、[esm.sh](https://esm.sh) 都是比较稳定实用的 CDN。具体链接，可以在字体页面查看。
+
+下面是 [swift-fs](https://github.com/swift-fs) 提供的示例代码。
+
+```css
+@import url('https://www.unpkg.com/@chinese-fonts/mkwtyt@1.4.0/dist/MaoKenTangYuan/result.css');
+
+:root {
+    --vp-font-family-base: 'MaoKenTangYuan (beta)';
+    /* --vp-font-family-mono: 'jiangxizhuokai'; */
+}
+```
+
 ## 字体是如何加载到浏览器的？
 
 1. 在 HTML 文件中添加字体 CSS 索引文件，该文件大小约为 30~50KB。
