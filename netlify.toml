@@ -18,3 +18,4 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Vary = "Origin"
+    Cache-Control = "public, max-age=86400, s-maxage=86400"
