@@ -6,5 +6,5 @@ export const AllCDN = [
     'https://192960944.r.cdn36.com/chinesefonts3',
 ];
 /** 默认的 CDN */
-export const __CDN__ = 'https://834832894.r.cdn36.com/chinesefonts3';
+export const __CDN__ = 'https://chinese-fonts-cdn.netlify.app';
 

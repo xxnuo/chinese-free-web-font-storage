@@ -1,0 +1,13 @@
+---
+import { CDNHome } from '../components/CDNHome';
+import CDNLayout from '../Layout/CDNLayout.astro';
+export const prerender = true;
+---
+
+<CDNLayout
+    title="字图 CDN | 一个免费中文字体公益 CDN 服务 | 中文网字计划"
+    description="中文网字计划提供的开源免费中文字体公益 CDN 服务，致力于为国内外全球 CJK 开发者提供高质量网络字体服务，让中文字体在互联网世界起飞。"
+    keywords="免费公益CDN服务,免费中文字体服务,免费中文字体CDN,开源中文字体,免费CJK字体CDN"
+>
+    <CDNHome client:load />
+</CDNLayout>

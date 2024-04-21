@@ -1,0 +1,74 @@
+---
+import '../index.css';
+import { CDNHeader } from '../components/CDNHeader';
+import { SEO } from 'astro-seo';
+import Sentry from '../components/SentryScript.astro';
+import { __CDN__ } from '../global';
+export interface Props {
+    title?: string;
+    description?: string;
+    canonicalURL?: string;
+    type?: 'website' | 'article' | 'blog' | 'product' | 'profile' | 'music' | 'video';
+    image?: string;
+    keywords?: string;
+    meta?: any;
+    defaultFontCSS?: string;
+    style?: string;
+    class?: string;
+    htmlClass?: string;
+}
+const {
+    title = '✨中文网字计划-提供便捷实用的全字符集中文渲染方案',
+    description = '中文网字计划致力于在互联网中提供更加便捷实用的全字符集中文渲染方案。我们通过精巧设计的字体分包方式，将庞大的字体文件切割为多个小型静态分包部署于云端，在全网领域内都可快捷、稳定地进行加载，提高中文字体在网络中的流通体验！',
+    canonicalURL,
+    image = '',
+    type: ogType,
+    keywords,
+    style,
+    defaultFontCSS = __CDN__ + '/packages/jxzk/dist/江西拙楷/result.css',
+    class: className,
+    htmlClass,
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh" class={htmlClass}>
+    <head>
+        <!-- Global Metadata -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+        <meta name="generator" content={Astro.generator} />
+        <slot name="meta" />
+        <!-- Primary Meta Tags -->
+        <SEO
+            title={title}
+            description={description}
+            openGraph={{
+                basic: {
+                    title: title,
+                    type: ogType ?? 'website',
+                    image:
+                        image ??
+                        'https://ik.imagekit.io/chinesefonts/image/website_description.png?updatedAt=1685230267522&tr=w-1200%2Ch-675%2Cfo-auto',
+                },
+                optional: {
+                    siteName: '中文网字计划',
+                },
+            }}
+        />
+        <meta
+            name="keywords"
+            content={keywords + ',中文网字计划,全字符集中文渲染方案,字体分包,字体部署,web font'}
+        />
+        <link rel="stylesheet" href={defaultFontCSS} />
+        <link rel="preconnect" href="https://901557678.r.cdn36.com/" crossorigin />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net/" crossorigin />
+        <link rel="preconnect" href="https://jsdelivr.deno.dev/" crossorigin />
+    </head>
+    <body style={style} class={className}>
+        <CDNHeader />
+        <slot />
+        <Sentry />
+    </body>
+</html>
