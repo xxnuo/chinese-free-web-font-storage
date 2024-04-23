@@ -32,3 +32,22 @@ article:
 在美国、新加坡和日本这些靠近边缘服务器的地区，其运输的延迟和承载能力都非常强，非常适合于字体的加载。
 
 > 注：某些节日和特别时期期间，国外节点统统不稳定，这个是没办法的事情。
+
+## 2024 年 3 月 部分服务挂机问题
+
+![Alt text](../../../assets/202403_CDN.png)
+
+其中一支分 CDN 在未有明确入口情况下，流量在一周内暴增，直接占满 100G 导致服务挂机。幸好是免费 CDN，没有花钱😂。
+
+重启后发现，来自法国和日本的流量贼大，所以我们将除东京、香港和 新加坡这些环亚洲站点关闭。毕竟主要面向国内的。
+
+| Edge locations                   | Total traffic |
+|---------------------------------|---------------|
+| Tokyo, Japan                    | 53.31 GB      |
+| **Frankfurt, Germany**          | 46.87 GB      |
+| Washington, America             | 17.59 GB      |
+| Singapore                       | 11.42 GB      |
+| Dubai, The United Arab Emirates | 1.62 GB       |
+| Hong Kong, China                | 943.4 MB      |
+| Silicon Valley, America         | 720.65 MB     |
+| Sao Paulo, Brazil               | 16.7 MB       |
