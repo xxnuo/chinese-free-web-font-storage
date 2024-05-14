@@ -17,7 +17,51 @@ article:
 
 > 如果你是转接给 CDN 使用，那么完全没有问题；CDN 的缓存仅仅会少量访问你的中继服务器。但是如果是直接提供给你的网站使用，那么最好斟酌一下。
 
+## 核心逻辑
+
+1. 利用免费的 Worker 服务，转换原始网站 URL 为另外一个 URL。
+2. 达成的效果是只需要改变 URL 的域名就可以访问的到相同的数据。
+3. Worker 是一种边缘部署的 JS 运行时的服务器。一般服务商会直接提供一个域名给你部署这个服务器。
+
+
+## 使用 Cloudflare 转接（推荐）
+
+虽然 Cloudflare 在国内的速度就是垃圾，但是在国外就厉害很多了。并且 Cloudflare 提供了巨量的 Worker 免费额度，利用这个特性可以将原始站点转为另一个域名。
+
+1. 登录或者注册 https://www.cloudflare.com/
+
+2. 进入管理面板，创建一个 Worker。一直点击蓝色，直到创建成功。
+
+![cloudflare_create_worker](../../../assets/cloudflare_create_worker.png)
+
+3. 进入代码编辑面板，直接输入下面的代码，然后点击 "Deploy" 按钮即可
+
+![Alt text](../../../assets/cloudflare_playground_deploy.png)
+
+```js
+export default {
+    async fetch(request, env, ctx) {
+        const url = new URL(request.url);
+        const redirectUrl = 'ik.imagekit.io'
+        url.host = redirectUrl;
+        return fetch(url).then(res => {
+            return new Response(res.body, {
+                headers: {
+                    server: "nginx",
+                    "Access-Control-Allow-Origin": "*",
+                    "Cache-Control": "public, max-age=86400"
+                }
+            })
+        })
+    }
+};
+```
+
+4. 这样就完成了 worker 的创建。一般在部署的时候，就告诉你 Worker 的地址了，记得保存哦。
+
 ## 使用 deno.dev 转接
+
+deno.dev 也是提供免费 Worker 服务的提供商，可以转接网站。
 
 1. 使用你的 Github 账号登陆 [deno.dev](https://deno.dev)。
 
