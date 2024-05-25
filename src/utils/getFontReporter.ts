@@ -7,7 +7,13 @@ export const getFontReporter = (font: string, fileName: string) => {
         return cache.get(tag)!;
     } else {
         const item = __CDN__ + `/packages/${font}/dist/${fileName}/reporter.json`;
-        const p = fetch(item).then<FontReporter>((res) => res.json());
+        const p = fetch(item)
+            .then<FontReporter>((res) => res.json())
+            .catch((e) => {
+                console.log(item);
+                throw new Error(e);
+                return;
+            });
         cache.set(tag, p);
         return p;
     }

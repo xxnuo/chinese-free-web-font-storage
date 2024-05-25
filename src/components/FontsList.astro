@@ -58,8 +58,7 @@ const list = await Promise.all(
                 return (
                     <li
                         class="flex-none cursor-pointer px-4 py-2 transition-colors duration-300  hover:bg-emerald-600 hover:text-white"
-                        data-name={i.name}
-                    >
+                        data-name={i.name}>
                         {i.name}
                     </li>
                 );
@@ -122,8 +121,7 @@ const list = await Promise.all(
                                                     class="display-font-show-hover"
                                                     href={`/fonts/${item.id}/${name}`}
                                                     data-src={__CDN__ + '/' + remote}
-                                                    data-style={style}
-                                                >
+                                                    data-style={style}>
                                                     <img
                                                         loading="lazy"
                                                         class="h-8 w-full lg:h-12 xl:h-16 2xl:h-20"
