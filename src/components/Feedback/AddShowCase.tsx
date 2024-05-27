@@ -1,8 +1,8 @@
 import { atom, ObjectAtom } from '@cn-ui/reactive';
-import { VModel } from '@cn-ui/reactive';
 import { addShowCaseRequest } from '../../api/commit';
 import { Notice } from '../../Notice';
 import { Dialog } from './Dialog';
+import { VModel } from '../../utils/VModel';
 export const AddShowCase = () => {
     const panelVisible = atom(false);
     const a = ObjectAtom<Parameters<typeof addShowCaseRequest>[0]>({

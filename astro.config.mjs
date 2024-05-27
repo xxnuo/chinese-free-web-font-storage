@@ -3,7 +3,6 @@ import sitemap from '@astrojs/sitemap';
 import solidJs from '@astrojs/solid-js';
 import tailwind from '@astrojs/tailwind';
 import robotsTxt from 'astro-robots-txt';
-import { sentryVitePlugin } from '@sentry/vite-plugin';
 import compress from 'astro-compress';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 // import astroRemark from '@astrojs/markdown-remark';
@@ -29,22 +28,6 @@ export default defineConfig({
                         dest: '',
                     },
                 ],
-            }),
-            import.meta.env.MODE === 'production' &&
-            sentryVitePlugin({
-                org: 'chinese-font',
-                project: 'chinese-font-fe',
-                // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
-                // and need `project:releases` and `org:read` scopes
-                authToken: env.SENTRY_AUTH_TOKEN,
-                sourcemaps: {
-                    // Specify the directory containing build artifacts
-                    assets: './dist/**',
-                    // Don't upload the source maps of dependencies
-                    ignore: ['./node_modules/**'],
-                },
-                // Helps troubleshooting - set to false to make plugin less noisy
-                debug: true,
             }),
         ],
     },

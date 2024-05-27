@@ -1,8 +1,9 @@
-import { atom, reflect, resource } from '@cn-ui/use';
+import { atom, reflect, resource } from '@cn-ui/reactive';
 import { AsyncReporterLoader } from './AsyncReporterLoader';
 import { UnicodeRange } from '@japont/unicode-range';
 import prettyBytes from 'pretty-bytes';
-import { VModel } from '@cn-ui/reactive';
+import { VModel } from '../../utils/VModel';
+
 
 export const TextWriter = AsyncReporterLoader((props) => {
     const reporter = props.reporter;

@@ -1,8 +1,8 @@
 import { atom, ObjectAtom } from '@cn-ui/reactive';
-import { VModel } from '@cn-ui/reactive';
 import { addFontRequest } from '../../api/commit';
 import { Notice } from '../../Notice';
 import { Dialog } from './Dialog';
+import { VModel } from '../../utils/VModel';
 export const AddFont = () => {
     const panelVisible = atom(false);
     const a = ObjectAtom<Parameters<typeof addFontRequest>[0]>({

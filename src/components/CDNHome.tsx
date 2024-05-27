@@ -1,5 +1,5 @@
-import { DebounceAtom, VModel, atom, reflect } from '@cn-ui/reactive';
-
+import { DebounceAtom,  atom, reflect } from '@cn-ui/reactive';
+import { VModel } from '../utils/VModel';
 export const CDNHome = () => {
     const selected = atom<LinkTemplate>({
         version: 'chinese3',
@@ -83,6 +83,7 @@ const SearchBox = () => {
                     </span>
                 </Show>
             </div>
+           
             <ul class="grid grid-cols-1 gap-4 py-8  sm:grid-cols-2  md:grid-cols-3">
                 {items().map((i) => {
                     return i.fonts.map((font) => {

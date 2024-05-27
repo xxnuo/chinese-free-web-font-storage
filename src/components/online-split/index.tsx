@@ -1,70 +1,13 @@
 import { For, Show, createEffect } from 'solid-js';
-import { saveAs } from 'file-saver';
 import { DragDropButton } from '../DragButton';
 import {
     ArrayAtom,
     atom,
+    classHelper,
     resource,
-    useEffectWithoutFirst,
-    type ResourceAtom,
 } from '@cn-ui/reactive';
 import prettyBytes from 'pretty-bytes';
 import { Notice } from '../../Notice';
-import { RaceFetch } from './RaceFetch';
-
-const PluginVersion = atom('');
-// 转为异步加载，防止文件发生阻塞
-let roots = [
-    'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split',
-    'https://jsdelivr.deno.dev/npm/@konghayao/cn-font-split',
-];
-
-const preload = () => {
-    /** 24h 小时更新一次的链接，保证版本更新正确 */
-    const scriptLink =
-        roots[1] +
-        (PluginVersion() ? '@' + PluginVersion() : '') +
-        '/dist/browser/index.js?t=' +
-        (Date.now() / (24 * 60 * 60 * 1000)).toFixed(0);
-    return import(/* @vite-ignore */ scriptLink)
-        .then((res) => {
-            const { fontSplit, Assets } = res as Awaited<typeof import('@konghayao/cn-font-split')>;
-            // 注册在线地址
-            Assets.pathTransform = (innerPath: string) =>
-                innerPath.replace('./', roots[0] + '/dist/browser/');
-            // 获取版本号信息
-            fetch(scriptLink, { cache: 'force-cache' }).then((res) => {
-                PluginVersion(res.headers.get('X-Jsd-Version')!);
-            });
-            return fontSplit;
-        })
-        .catch((e) => {
-            Notice.error(e as Error);
-        });
-};
-// 为给用户提供良好的体验，直接开始下载需要的依赖包
-Promise.all([
-    RaceFetch('/dist/browser/hb-subset.wasm', { priority: 'low' }, roots),
-    RaceFetch('/dist/browser/cn_char_rank.dat', { priority: 'low' }, roots),
-    RaceFetch('/dist/browser/unicodes_contours.dat', { priority: 'low' }, roots),
-    RaceFetch('/dist/browser/compress_binding.wasm', { priority: 'low' }, roots),
-]).then((res) => console.log('资源预加载完成'));
-
-/** 获取 cn-font-split 的版本号 */
-const getVersions = () => {
-    return fetch('https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split')
-        .then((res) => res.json())
-        .then((res) => res.versions.slice(0, 10) as string[]);
-};
-
-/** 加载测试文件 */
-const getTestingFile = () => {
-    return fetch(
-        'https://jsdelivr.deno.dev/gh/KonghaYao/cn-font-split/packages/demo/public/SmileySans-Oblique.ttf'
-    )
-        .then((res) => res.blob())
-        .then((res) => new File([res], 'SmileySans-Oblique.ttf'));
-};
 
 export const OnlineSplit = () => {
     const file = atom<File | null>(null);
@@ -80,36 +23,22 @@ export const OnlineSplit = () => {
     });
 
     /** 监控 zip 压缩 */
-    const createZip = resource(
-        async () => {
-            if (!file()) throw new Error('请添加文件');
-            const { default: JSZip } = await import('jszip');
-            const zip = new JSZip();
-            const name = file()!.name.replace(/\..*/, '');
-            const folder = zip.folder(name)!;
-            resultList().forEach((i) => {
-                folder.file(i.name, i.buffer);
-            });
-
-            return zip.generateAsync({ type: 'blob' }).then(function (content: Blob) {
-                Notice.success('压缩文件下载中');
-                saveAs(content, name + '.zip');
-            });
-        },
-        { immediately: false }
-    );
+    const createZip = useZip(() => {
+        if (!file()) throw new Error('请添加文件');
+        return file()!.name.replace(/\..*/, '');
+    }, resultList);
     /** 启动字体分包进程 */
     const startSplit = resource(
         async () => {
             const cnFontSplit = fontSplitStatus();
             if (!file()) throw new Error('请添加文件');
             if (!cnFontSplit) throw new Error('请等待 cn-font-split 加载完成');
-            const url = URL.createObjectURL(file()!);
             logMessage([]);
             resultList([]);
+            const arrayBuffer = await file()!.arrayBuffer()
             return cnFontSplit({
                 destFold: '',
-                FontPath: url,
+                FontPath: new Uint8Array(arrayBuffer),
                 previewImage: {},
                 log(...args) {
                     logMessage((i) => [...i, args.join(' ')]);
@@ -123,18 +52,23 @@ export const OnlineSplit = () => {
                     resultList((i) => [...i, { name: path, buffer }]);
                 },
             })
-                .then((res) => URL.revokeObjectURL(url))
                 .then((res) => {
                     Notice.success('全部打包任务完成');
                     return res;
                 });
         },
-        { immediately: false }
+        {
+            immediately: false
+        }
     );
-    useResourceErrorWatch(createZip);
-    useResourceErrorWatch(startSplit);
     return (
-        <section class="mx-auto my-8 grid aspect-video h-[80vh] w-full max-w-[96rem] grid-cols-2 gap-4 overflow-hidden rounded-xl bg-white ">
+        <section class={classHelper.base("mx-auto my-8 grid aspect-video h-[80vh] w-full max-w-[96rem] grid-cols-2 gap-4 overflow-hidden rounded-xl bg-white transition-all border-2")(
+
+            startSplit.loading() && "border-yellow-500 ",
+            startSplit.error() && "border-red-600",
+            "border-gray-200"
+
+        )}>
             <div class="flex flex-col p-4">
                 <header class="flex items-center gap-8">
                     <label class="flex-none">版本号</label>
@@ -171,6 +105,9 @@ export const OnlineSplit = () => {
                         >
                             <header class="pb-2 text-xl text-black">
                                 在线字体分包器 <br></br>
+                                <aside class='text-md text-gray-400 py-4'>
+                                    .otf .ttf  ====》  .css + .woff2
+                                </aside>
                                 <aside class="flex justify-center gap-4 py-4">
                                     <span class="rounded-md bg-green-600 px-2 text-sm text-white">
                                         cn-font-split v{PluginVersion()}
@@ -191,21 +128,29 @@ export const OnlineSplit = () => {
                         <div>
                             {file()!.name} | {prettyBytes(file()!.size)}
                         </div>
-                        <Show
-                            when={startSplit.isReady()}
-                            fallback={
-                                <div class="text-red-600 ">
-                                    正在处理文件中，请稍等，这个文本消失之后即为完成
-                                </div>
-                            }
-                        >
-                            <button
-                                onclick={() => startSplit.refetch()}
-                                class="rounded-lg bg-green-600 p-1 text-white"
+                        <div class='flex gap-2'>
+                            <Show
+                                when={startSplit.isReady()}
+                                fallback={
+                                    <div class="text-red-600 ">
+                                        正在处理文件中，请稍等，这个文本消失之后即为完成
+                                    </div>
+                                }
                             >
-                                点击开始进行字体分包
-                            </button>
-                        </Show>
+                                <button
+                                    onclick={() => startSplit.refetch()}
+                                    class="rounded-lg bg-green-600 p-1 text-white"
+                                >
+                                    点击开始进行字体分包
+                                </button>
+                                <button
+                                    onclick={() => file(null)}
+                                    class="rounded-lg bg-yellow-500 p-1 text-white"
+                                >
+                                    更换字体
+                                </button>
+                            </Show>
+                        </div>
                     </div>
                 </Show>
                 <div class="px-4 text-xs text-rose-600">
@@ -226,8 +171,12 @@ export const OnlineSplit = () => {
             <section class="flex h-full flex-col gap-4 overflow-hidden bg-gray-200 p-4">
                 <header class="flex justify-between ">
                     <span class="text-xl">Logger 日志</span>
+                    <div class='flex-1'></div>
                     <a href="https://github.com/KonghaYao/cn-font-split/issues" target="_blank">
                         反馈
+                    </a>
+                    <a href="https://github.com/KonghaYao/cn-font-split" target="_blank">
+                        Github
                     </a>
                 </header>
                 <Show when={startSplit.error()}>
@@ -238,8 +187,29 @@ export const OnlineSplit = () => {
                 </Show>
                 <LogMessage logMessage={logMessage()}></LogMessage>
                 <header class="text-xl">Output 输出文件</header>
-                <FileList resultList={resultList()}></FileList>
-                <span class="flex justify-end gap-4 text-xs">
+                <section class='flex h-full  max-h-[100%] overflow-hidden bg-gray-800 font-sans text-sm text-gray-100 rounded-xl select-text '>
+
+                    <FileList resultList={resultList()}></FileList>
+                    <Show when={startSplit()}>
+                        <div class='flex flex-col rounded-xl bg-gray-700 p-2'>
+                            <span>
+                                字体名称：
+                                {
+                                    startSplit().css.family
+                                }
+                            </span>
+                            <span>
+                                字重：
+                                {
+                                    startSplit().css.weight
+                                }
+                            </span>
+                        </div>
+                    </Show>
+                </section>
+                <span class="flex justify-end gap-4 text-xs text-green-600">
+                    <span> 在您的代码里面直接引用 result.css 文件就好啦</span>
+                    <div class='flex-1'></div>
                     <span>{resultList().length}</span>
                     <span>
                         {prettyBytes(resultList().reduce((col, i) => i.buffer.byteLength + col, 0))}
@@ -257,6 +227,8 @@ export const OnlineSplit = () => {
     );
 };
 import { createAutoAnimate } from '@formkit/auto-animate/solid';
+import { useZip } from './useZip';
+import { getVersions, preload, PluginVersion, getTestingFile } from './getVersions';
 
 /** 右下角的文件列表 */
 function FileList(props: {
@@ -266,15 +238,15 @@ function FileList(props: {
     }[];
 }) {
     return (
-        <ul class="flex h-full max-h-[100%] select-text flex-col-reverse overflow-scroll rounded-xl bg-gray-800 p-4 font-sans text-sm text-gray-100">
+        <ul class="flex h-full flex-1 max-h-[100%] flex-col-reverse overflow-scroll  p-4 ">
             <For each={[...props.resultList].reverse()}>
                 {(item) => {
                     return (
                         <li>
-                            <span class="col-span-2 inline-block min-w-[8rem]">
+                            <span class="col-span-1 inline-block min-w-[8rem]">
                                 {prettyBytes(item.buffer.byteLength)}
                             </span>
-                            <span class="col-span-6">{item.name}</span>
+                            <span class="col-span-7">{item.name}</span>
                         </li>
                     );
                 }}
@@ -311,7 +283,3 @@ export const ConsolePrint = (item: string) => {
             '<span style="color: blue;font-weight: bold;" >$1</span>'
         );
 };
-
-function useResourceErrorWatch<T>(resource: ResourceAtom<T>) {
-    useEffectWithoutFirst(() => Notice.error(resource.error().message), [resource.error]);
-}

@@ -1,4 +1,4 @@
-import { atom } from '@cn-ui/use';
+import { atom } from '@cn-ui/reactive';
 import { Component, For, onCleanup, onMount, Show } from 'solid-js';
 
 import { selectDefPreviewText } from './defPreviewLanguages';

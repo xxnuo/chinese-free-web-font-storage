@@ -1,5 +1,5 @@
 import { Suspense, type Component, lazy } from 'solid-js';
-import { atom } from '@cn-ui/use';
+import { atom } from '@cn-ui/reactive';
 import { getFontReporter } from '../../utils/getFontReporter';
 import type { FontReporter } from '@konghayao/cn-font-split';
 

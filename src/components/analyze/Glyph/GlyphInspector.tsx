@@ -1,9 +1,10 @@
 import { type Font } from '@konghayao/opentype.js';
 import { VirtualContainer } from '@minht11/solid-virtual-container';
-import { atom, reflect, resource, type Atom, ArrayAtom, VModel, ObjectAtom } from '@cn-ui/reactive';
+import { atom, reflect, resource, type Atom, ArrayAtom,  ObjectAtom } from '@cn-ui/reactive';
 import { RenderGlyph } from './RenderGlyph';
 import { For, Show } from 'solid-js';
 import { RenderGlyphDetail } from './RenderGlyphDetail';
+import { VModel } from '../../../utils/VModel';
 
 export interface GlyphConfig {
     fontScale: number;

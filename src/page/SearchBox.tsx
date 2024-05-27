@@ -1,4 +1,4 @@
-import { Atom, atom, reflect } from '@cn-ui/use';
+import { Atom, atom, reflect } from '@cn-ui/reactive';
 import { Component, createContext, For, JSXElement } from 'solid-js';
 export const SearchBoxContext = createContext<{
     list: Atom<string[]>;
