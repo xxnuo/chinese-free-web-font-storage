@@ -97,54 +97,43 @@ const list = await Promise.all(
     </style>
     <nav
         id="fonts-wrapper"
-        class="overflow-hidden flex-1 flex justify-between md:mx-4 p-2 px-4 2xl:px-8 my-4"
+        class="overflow-hidden flex-1 flex justify-between md:mx-4 p-2 px-4 2xl:px-8 my-4 relative"
     >
         <FontShow client:load />
+
         <!-- 不要将下面这段写进 solidjs astro 的处理会将 json 传过去 -->
         <nav
-            class="flex-1 h-full overflow-scroll rounded-lg bg-white px-12 overflow-x-hidden py-4 2xl:py-12"
+            class="flex-1 md:flex-[2] xl:flex-[4] h-full overflow-scroll rounded-lg overflow-x-hidden py-4"
         >
-            <ul class="font-parent flex flex-col gap-4 an-scroll-list">
+            <ul class="font-parent grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {
                     list.map((item) => {
-                        return (
-                            <li id={'fonts-' + item.name} class="">
-                                <header class="an-scroll-item p-1 text-center text-2xl text-rose-600 md:mt-4 md:py-4">
-                                    {item.name}
-                                </header>
-                                <ul class=" flex  flex-col justify-center gap-2">
-                                    {item.remotePath.map(({ url: remote, style }) => {
-                                        const [_, name] = remote.match(/dist\/(.*?)\/result/)!;
-                                        return (
-                                            <li class="an-scroll-item relative flex-wrap overflow-hidden rounded-md bg-neutral-100 p-2 transition-colors hover:bg-neutral-200">
-                                                <a
-                                                    class="display-font-show-hover"
-                                                    href={`/fonts/${item.id}/${name}`}
-                                                    data-src={__CDN__ + '/' + remote}
-                                                    data-style={style}>
-                                                    <img
-                                                        loading="lazy"
-                                                        class="h-8 w-full lg:h-12 xl:h-16 2xl:h-20"
-                                                        src={
-                                                            __CDN__ +
-                                                            '/' +
-                                                            remote.replace(
-                                                                'result.css',
-                                                                'preview.svg'
-                                                            )
-                                                        }
-                                                        alt={name + '字体展示'}
-                                                    />
-                                                </a>
-                                                <span class="absolute right-2 top-2 text-xl">
-                                                    ➡️
-                                                </span>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </li>
-                        );
+                        return item.remotePath.map(({ url: remote, style }) => {
+                            const [_, name] = remote.match(/dist\/(.*?)\/result/)!;
+                            return (
+                                <li class="relative flex-wrap overflow-hidden rounded-md bg-white p-2 transition-colors hover:bg-neutral-100">
+                                    <a
+                                        class="display-font-show-hover"
+                                        href={`/fonts/${item.id}/${name}`}
+                                        data-src={__CDN__ + '/' + remote}
+                                        data-style={style}>
+                                        <img
+                                            loading="lazy"
+                                            class=" h-32 "
+                                            src={
+                                                __CDN__ +
+                                                '/' +
+                                                remote.replace('result.css', 'preview.svg')
+                                            }
+                                            alt={name + '字体展示'}
+                                        />
+                                    </a>
+                                    <span class="text-xm absolute bottom-2 right-2 text-gray-400">
+                                        {item.name} ➡️
+                                    </span>
+                                </li>
+                            );
+                        });
                     })
                 }
             </ul>
