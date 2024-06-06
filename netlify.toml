@@ -9,9 +9,6 @@
 
   # Default build command.
   command = "pnpm build:cdn"
-[build.processing.css]
-  bundle = true
-  minify = true
 
 [[headers]]
   for = "/*"
