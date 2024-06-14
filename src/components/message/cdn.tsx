@@ -1,249 +1,74 @@
-import { reflect, resource, type Atom } from '@cn-ui/reactive';
+import { reflect, resource, type Atom, atom } from '@cn-ui/reactive';
 import prettyBytes from 'pretty-bytes';
 import { Show } from 'solid-js';
 import { ECharts } from '../fontDisplay/ECharts';
-export interface CDNData {
-    requestId: string;
-    list: {
-        country: string;
-        avgLatency: number;
-        avgTransferRate: number;
-        request: number;
-        bandwidth: number;
-    }[];
-    data: {
-        trafficCacheStatisticsModel: {
-            trafficCache: {
-                total: number;
-                cache: number;
-                unCache: number;
-                cacheRatio: number;
-                unCacheRatio: number;
-            };
-            trafficCacheModels: {
-                total: number;
-                time: string;
-                cache: number;
-                unCache: number;
-                cacheRatio: number;
-                unCacheRatio: number;
-            }[];
-        };
-        continentTrafficStatisticsModels: {
-            total: number;
-            baseContinentModel: {
-                continentName: string;
-            };
-            ratio: number;
-        }[];
-        edgeNodeTrafficStatisticsModels: {
-            total: number;
-            baseEdgeNodeModel: {
-                edgeNodeName: string;
-                edgeNodeUUID: string;
-                city: string;
-                country: string;
-            };
-        }[];
-        resourceTrafficStatisticsModels: {
-            total: number;
-            baseResourceModel: {
-                resourceName: string;
-                resourceUUID: string;
-                status: string;
-            };
-        }[];
-    };
-}
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 export const CDNAnalyze = () => {
-    const data = resource<CDNData>(() => {
-        return fetch('https://lightcdn-record.deno.dev').then((res) => res.json());
+    const hotWebSite = atom<{ key: string[], value: number }[]>([])
+    const data = resource(() => {
+        return fetchEventSource('https://chinese-fonts-cdn.deno.dev/v1/deno-kv?get=["records","referer"]', {
+            onmessage(e) {
+                hotWebSite(i => ([...i, JSON.parse(e.data)]))
+            }
+        })
     });
-    const trafficCache = reflect(() => data()?.data.trafficCacheStatisticsModel.trafficCache);
-    const trafficCacheModels = reflect(
-        () => data()?.data.trafficCacheStatisticsModel.trafficCacheModels
-    );
-    const trafficAreaList = reflect(() => data()?.list);
+    const hotLink = atom<{ key: string[], value: number }[]>([])
+    const hotLinkData = resource(() => {
+        return fetchEventSource('https://chinese-fonts-cdn.deno.dev/v1/deno-kv?get=["records","path"]', {
+            onmessage(e) {
+                hotLink(i => ([...i, JSON.parse(e.data)]))
+            }
+        })
+    });
     return (
         <>
             <h2 class=" my-12 text-center text-3xl leading-9">
-                中文网字计划 CDN 分析 -- 近 30 天使用情况
+                中文网字计划 CDN 分析
             </h2>
-            <section class="m-auto grid max-w-7xl grid-cols-3 gap-4">
+            <section class="m-auto grid max-w-7xl grid-cols-2 gap-4">
                 <div>
-                    <Show when={trafficCache()}>
-                        <CacheRato trafficCache={trafficCache}></CacheRato>
-                    </Show>
+                    <div>
+                        热门字体
+                    </div>
+                    <ul class='font-sans'>
+                        {hotLink().sort((a, b) => b.value - a.value).filter(i => {
+                            return !( i.value <= 50)
+                        }).map(i => {
+                            return <li class='flex'>
+                                <span >
+
+                                    {i.key.at(-1)}
+
+                                </span>
+                                <span class='flex-1'></span>
+                                <span>{i.value}</span>
+                            </li>
+                        })}
+                    </ul>
                 </div>
-                <div class=" col-span-2">
-                    <Show when={trafficCacheModels()}>
-                        <CacheRatoModels trafficCacheModels={trafficCacheModels}></CacheRatoModels>
-                    </Show>
-                </div>
-                <div class=" col-span-1"></div>
-                <div class=" col-span-2">
-                    <Show when={trafficCacheModels()}>
-                        <TrafficAreaList trafficAreaList={trafficAreaList}></TrafficAreaList>
-                    </Show>
+                <div class=" col-span-1">
+                    <div>
+                        访问热榜
+                    </div>
+                    <ul class='font-sans'>
+                        {hotWebSite().sort((a, b) => b.value - a.value).filter(i => {
+                            const host = i.key.at(-1)
+                            return !(/^localhost:\d+/.test(host!) || host === 'localhost' || !isNaN(parseInt(host)) || i.value <= 10)
+                        }).map(i => {
+                            return <li class='flex'>
+                                <a href={'https://' + i.key.at(-1)}>
+
+                                    {i.key.at(-1)}
+
+                                </a>
+                                <span class='flex-1'></span>
+                                <span>{i.value}</span>
+                            </li>
+                        })}
+                    </ul>
                 </div>
             </section>
         </>
-    );
-};
-
-/** 缓存请求数 */
-const TrafficAreaList = ({ trafficAreaList }: { trafficAreaList: Atom<CDNData['list']> }) => {
-    return (
-        <ECharts
-            options={{
-                title: {
-                    text: 'CDN 请求数',
-                    left: 20,
-                    top: 20,
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter(p: {
-                        data: {
-                            name: string;
-                            request: number;
-                            bandwidth: number;
-                            avgTransferRate: number;
-                            avgLatency: number;
-                        };
-                    }) {
-                        if (p.data)
-                            return `${
-                                p.data.name
-                            }<br> ${p.data.request.toLocaleString()}次 ${prettyBytes(
-                                p.data.bandwidth
-                            )}<br> 均请求 ${prettyBytes(
-                                p.data.avgTransferRate
-                            )}<br> 平均延迟 ${Math.ceil(p.data.avgLatency)} ms`;
-                    },
-                },
-                legend: {
-                    show: false,
-                    bottom: '5%',
-                    left: '',
-                },
-                series: [
-                    {
-                        name: 'CDN 请求数',
-                        type: 'pie',
-                        radius: ['40%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2,
-                        },
-                        data: trafficAreaList()
-                            .sort((a, b) => b.request - a.request)
-                            .reduce((col, cur, index) => {
-                                if (index < 6) {
-                                    col.push(cur);
-                                } else if (index === 7) {
-                                    col.push({
-                                        ...cur,
-                                        country: 'Other',
-                                    });
-                                } else {
-                                    const last = col.at(-1)!;
-                                    last.request += cur.request;
-                                    last.bandwidth += cur.bandwidth;
-                                }
-                                return col;
-                            }, [] as ReturnType<typeof trafficAreaList>)
-                            .map((i) => {
-                                return {
-                                    value: i.request,
-                                    ...i,
-                                    name: i.country,
-                                };
-                            }),
-                    },
-                ],
-            }}
-        ></ECharts>
-    );
-};
-
-/** 缓存曲线图 */
-const CacheRatoModels = ({
-    trafficCacheModels,
-}: {
-    trafficCacheModels: Atom<CDNData['data']['trafficCacheStatisticsModel']['trafficCacheModels']>;
-}) => {
-    return (
-        <ECharts
-            options={{
-                title: {
-                    text: 'CDN 每日使用情况',
-                    left: 'center',
-                    top: 20,
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter(p: { name: string; seriesName: string; value: number }) {
-                        return [`${p.name}`, p.seriesName + ' ' + prettyBytes(p.value)].join(
-                            '<br>'
-                        );
-                    },
-                },
-                xAxis: [
-                    {
-                        type: 'category',
-                        data: trafficCacheModels().map((i) => i.time.split(' ')[0]),
-                        axisTick: {
-                            alignWithLabel: true,
-                        },
-                    },
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        axisLabel: {
-                            formatter(p: number) {
-                                return prettyBytes(p);
-                            },
-                        },
-                    },
-                ],
-                legend: {
-                    bottom: '5%',
-                    left: 'center',
-                },
-                series: [
-                    {
-                        name: '已经缓存',
-                        type: 'bar',
-                        barWidth: '60%',
-                        stack: 'a',
-                        markLine: {
-                            data: [
-                                {
-                                    type: 'average',
-                                    name: '平均缓存',
-                                    label: {
-                                        formatter(b: { value: number }) {
-                                            return prettyBytes(b.value);
-                                        },
-                                    },
-                                },
-                            ],
-                        },
-                        data: trafficCacheModels().map((i) => i.cache),
-                    },
-                    {
-                        name: '未缓存',
-                        type: 'bar',
-                        barWidth: '60%',
-                        stack: 'a',
-                        data: trafficCacheModels().map((i) => i.unCache),
-                    },
-                ],
-            }}
-        ></ECharts>
     );
 };
 
@@ -284,15 +109,13 @@ const CacheRato = ({
                         data: [
                             {
                                 value: trafficCache().unCache,
-                                name: `缓存 ${prettyBytes(trafficCache().unCache)} ${
-                                    trafficCache().unCacheRatio * 100
-                                } % `,
+                                name: `缓存 ${prettyBytes(trafficCache().unCache)} ${trafficCache().unCacheRatio * 100
+                                    } % `,
                             },
                             {
                                 value: trafficCache().cache,
-                                name: `缓存 ${prettyBytes(trafficCache().cache)} ${
-                                    trafficCache().cacheRatio * 100
-                                } % `,
+                                name: `缓存 ${prettyBytes(trafficCache().cache)} ${trafficCache().cacheRatio * 100
+                                    } % `,
                             },
                         ],
                     },
