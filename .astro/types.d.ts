@@ -204,6 +204,13 @@ declare module 'astro:content' {
   collection: "post";
   data: any
 } & { render(): Render[".md"] };
+"free_static_site_deploy.md": {
+	id: "free_static_site_deploy.md";
+  slug: "free_static_site_deploy";
+  body: string;
+  collection: "post";
+  data: any
+} & { render(): Render[".md"] };
 "get_start.md": {
 	id: "get_start.md";
   slug: "get_start";

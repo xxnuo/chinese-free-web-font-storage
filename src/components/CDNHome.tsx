@@ -1,4 +1,4 @@
-import { DebounceAtom,  atom, reflect } from '@cn-ui/reactive';
+import { DebounceAtom, atom, reflect } from '@cn-ui/reactive';
 import { VModel } from '../utils/VModel';
 export const CDNHome = () => {
     const selected = atom<LinkTemplate>({
@@ -83,13 +83,13 @@ const SearchBox = () => {
                     </span>
                 </Show>
             </div>
-           
+
             <ul class="grid grid-cols-1 gap-4 py-8  sm:grid-cols-2  md:grid-cols-3">
                 {items().map((i) => {
                     return i.fonts.map((font) => {
                         return (
                             // biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
-                            <li class="z-0 flex flex-col justify-between rounded border bg-gray-100 p-2 transition-all hover:z-10 hover:scale-150 hover:text-green-600 hover:shadow-md hover:backdrop-blur-sm">
+                            <li class="z-0 flex flex-col justify-between rounded border bg-gray-100 p-2 transition-all hover:z-10 hover:scale-125 hover:text-green-600 hover:shadow-md hover:backdrop-blur-sm">
                                 <span class="mb-2 border-b pb-2 text-2xl">{font.name}</span>
                                 <img loading="lazy" src={`${__CDN__}/${font.pic}`} alt="" />
                                 <span
@@ -131,25 +131,3 @@ interface LinkTemplate {
     package: string;
     subPackage: string;
 }
-
-const CDNLink = (props: LinkTemplate) => {
-    return (
-        <div class="flex w-fit">
-            <p class=" text-lg font-bold text-green-600">
-                https://chinese-fonts-cdn.deno.dev/
-                <span class="cursor-pointer border-b-4 border-dashed border-orange-700">
-                    {props.version}
-                </span>
-                /packages/
-                <span class="cursor-pointer border-b-4 border-dashed border-orange-700">
-                    {props.package}
-                </span>
-                /dist/
-                <span class="cursor-pointer border-b-4 border-dashed border-orange-700">
-                    {props.subPackage}
-                </span>
-                /result.css
-            </p>
-        </div>
-    );
-};
