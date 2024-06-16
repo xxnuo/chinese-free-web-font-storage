@@ -66,9 +66,9 @@ article:
 
 ![中文网字计划——相关技术资源](/assets/how_we_deploy_font.png)
 
-### 📦 [@konghayao/cn-font-split](https://www.npmjs.com/package/@konghayao/cn-font-split)
+### 📦 [cn-font-split](https://www.npmjs.com/package/cn-font-split)
 
-@konghayao/cn-font-split 是一个基于 Node.js 的字体分包器，能够将来源字体文件分成多个包，并且提供附带成果预览和数据分析功能 📊。中文网字体计划使用 @konghayao/cn-font-split 作为核心，构建了一系列字体的分包成品。如果您需要对私有字体进行简单分包和静态部署，选择它再适合不过了。
+cn-font-split 是一个基于 Node.js 的字体分包器，能够将来源字体文件分成多个包，并且提供附带成果预览和数据分析功能 📊。中文网字体计划使用 cn-font-split 作为核心，构建了一系列字体的分包成品。如果您需要对私有字体进行简单分包和静态部署，选择它再适合不过了。
 
 ### 🏪 [中文网字计划字体仓库](https://github.com/KonghaYao/chinese-free-web-font-storage)
 
@@ -80,7 +80,7 @@ article:
 
 ### 🍕 [在线字体分包器](/online-split)
 
-@konghayao/cn-font-split 经过神奇的代码重构，使得其可以运行在任何标准的 Nodejs 或者是 Web 环境中。这意味着几乎所有现代浏览器都可以直接在线分包字体，只想要分一次包的开发者不需要写任何代码即可分包。
+cn-font-split 经过神奇的代码重构，使得其可以运行在任何标准的 Nodejs 或者是 Web 环境中。这意味着几乎所有现代浏览器都可以直接在线分包字体，只想要分一次包的开发者不需要写任何代码即可分包。
 
 ### 🤖 [字体管理系统](https://github.com/KonghaYao/font-server)
 

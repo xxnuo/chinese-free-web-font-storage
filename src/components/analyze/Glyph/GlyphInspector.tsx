@@ -1,6 +1,6 @@
 import { type Font } from '@konghayao/opentype.js';
 import { VirtualContainer } from '@minht11/solid-virtual-container';
-import { atom, reflect, resource, type Atom, ArrayAtom,  ObjectAtom } from '@cn-ui/reactive';
+import { atom, reflect, resource, type Atom, ArrayAtom, ObjectAtom } from '@cn-ui/reactive';
 import { RenderGlyph } from './RenderGlyph';
 import { For, Show } from 'solid-js';
 import { RenderGlyphDetail } from './RenderGlyphDetail';
@@ -44,7 +44,7 @@ export const GlyphInspector = (props: { file: File }) => {
         if (['.woff2', '.woff'].some((i) => props.file.name.endsWith(i))) {
             const buffer = await props.file.arrayBuffer();
             const { convert } = await import(
-                'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split/dist/browser/index.js'
+                'https://cdn.jsdelivr.net/npm/cn-font-split/dist/browser/index.js'
             );
             const otfBuffer = await convert(new Uint8Array(buffer), 'truetype', 'woff2');
             return opentype.parse(otfBuffer);

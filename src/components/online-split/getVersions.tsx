@@ -5,20 +5,22 @@ import { RaceFetch } from './RaceFetch';
 export const PluginVersion = atom('');
 // 转为异步加载，防止文件发生阻塞
 let roots = [
-    'https://jsdelivr.deno.dev/npm/@konghayao/cn-font-split',
-    // 'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split',
+    'https://jsdelivr.deno.dev/npm/cn-font-split',
+    // 'https://cdn.jsdelivr.net/npm/cn-font-split',
 ];
 export const preload = () => {
     /** 24h 小时更新一次的链接，保证版本更新正确 */
-    const scriptLink = roots[0] +
+    const scriptLink =
+        roots[0] +
         (PluginVersion() ? '@' + PluginVersion() : '') +
         '/dist/browser/index.js?t=' +
         (Date.now() / (24 * 60 * 60 * 1000)).toFixed(0);
     return import(/* @vite-ignore */ scriptLink)
         .then((res) => {
-            const { fontSplit, Assets } = res as Awaited<typeof import('@konghayao/cn-font-split')>;
+            const { fontSplit, Assets } = res as Awaited<typeof import('cn-font-split')>;
             // 注册在线地址
-            Assets.pathTransform = (innerPath: string) => innerPath.replace('./', roots[0] + '/dist/browser/');
+            Assets.pathTransform = (innerPath: string) =>
+                innerPath.replace('./', roots[0] + '/dist/browser/');
             // 获取版本号信息
             fetch(scriptLink, { cache: 'force-cache' }).then((res) => {
                 PluginVersion(res.headers.get('X-Jsd-Version')!);
@@ -26,7 +28,7 @@ export const preload = () => {
             return fontSplit;
         })
         .catch((e) => {
-            console.error(e)
+            console.error(e);
             Notice.error(e as Error);
         });
 };
@@ -39,7 +41,7 @@ Promise.all([
 ]).then((res) => console.log('资源预加载完成'));
 /** 获取 cn-font-split 的版本号 */
 export const getVersions = () => {
-    return fetch('https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split')
+    return fetch('https://data.jsdelivr.com/v1/package/npm/cn-font-split')
         .then((res) => res.json())
         .then((res) => res.versions.slice(0, 10) as string[]);
 };

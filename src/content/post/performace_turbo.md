@@ -18,16 +18,16 @@ article:
 
 ## 字体分包优化
 
-字体分包使用 `@konghayao/cn-font-split` 可以轻松配置并分包，下面的优化也是采用这个插件进行优化的。
+字体分包使用 `cn-font-split` 可以轻松配置并分包，下面的优化也是采用这个插件进行优化的。
 
 ### 使用 woff2 格式的成品字体
 
 中文字体包非常庞大，一个 OTF 或者 TTF 文件就能有 5 ～ 10 MB，直接使用将会导致网络卡顿。所以，我们可以将这些字体切割成小分的 woff2 字体，这样既可以按需加载，也可以支持所有文本。
 
-`@konghayao/cn-font-split` 现在默认使用 woff2 作为字体分包结果，你只需要运行命令行或者 javascript 代码即可。又或者。。。[直接在线上使用](/online-split)！
+`cn-font-split` 现在默认使用 woff2 作为字体分包结果，你只需要运行命令行或者 javascript 代码即可。又或者。。。[直接在线上使用](/online-split)！
 
 ```js
-import { fontSplit } from '@konghayao/cn-font-split';
+import { fontSplit } from 'cn-font-split';
 await fontSplit({
     FontPath: `./fonts/fonts.ttf`, // 插件会自动转化
     destFold: dest,

@@ -1,7 +1,7 @@
 import { Suspense, type Component, lazy } from 'solid-js';
 import { atom } from '@cn-ui/reactive';
 import { getFontReporter } from '../../utils/getFontReporter';
-import type { FontReporter } from '@konghayao/cn-font-split';
+import type { FontReporter } from 'cn-font-split';
 
 /** 报告加载器 */
 export const AsyncReporterLoader = (

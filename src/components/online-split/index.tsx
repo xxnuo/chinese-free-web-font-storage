@@ -1,11 +1,6 @@
 import { For, Show, createEffect } from 'solid-js';
 import { DragDropButton } from '../DragButton';
-import {
-    ArrayAtom,
-    atom,
-    classHelper,
-    resource,
-} from '@cn-ui/reactive';
+import { ArrayAtom, atom, classHelper, resource } from '@cn-ui/reactive';
 import prettyBytes from 'pretty-bytes';
 import { Notice } from '../../Notice';
 
@@ -35,7 +30,7 @@ export const OnlineSplit = () => {
             if (!cnFontSplit) throw new Error('请等待 cn-font-split 加载完成');
             logMessage([]);
             resultList([]);
-            const arrayBuffer = await file()!.arrayBuffer()
+            const arrayBuffer = await file()!.arrayBuffer();
             return cnFontSplit({
                 destFold: '',
                 FontPath: new Uint8Array(arrayBuffer),
@@ -51,24 +46,25 @@ export const OnlineSplit = () => {
                             : new Uint8Array(await new Blob([file]).arrayBuffer());
                     resultList((i) => [...i, { name: path, buffer }]);
                 },
-            })
-                .then((res) => {
-                    Notice.success('全部打包任务完成');
-                    return res;
-                });
+            }).then((res) => {
+                Notice.success('全部打包任务完成');
+                return res;
+            });
         },
         {
-            immediately: false
+            immediately: false,
         }
     );
     return (
-        <section class={classHelper.base("mx-auto my-8 grid aspect-video h-[80vh] w-full max-w-[96rem] grid-cols-2 gap-4 overflow-hidden rounded-xl bg-white transition-all border-2")(
-
-            startSplit.loading() && "border-yellow-500 ",
-            startSplit.error() && "border-red-600",
-            "border-gray-200"
-
-        )}>
+        <section
+            class={classHelper.base(
+                'mx-auto my-8 grid aspect-video h-[80vh] w-full max-w-[96rem] grid-cols-2 gap-4 overflow-hidden rounded-xl border-2 bg-white transition-all'
+            )(
+                startSplit.loading() && 'border-yellow-500 ',
+                startSplit.error() && 'border-red-600',
+                'border-gray-200'
+            )}
+        >
             <div class="flex flex-col p-4">
                 <header class="flex items-center gap-8">
                     <label class="flex-none">版本号</label>
@@ -105,8 +101,8 @@ export const OnlineSplit = () => {
                         >
                             <header class="pb-2 text-xl text-black">
                                 在线字体分包器 <br></br>
-                                <aside class='text-md text-gray-400 py-4'>
-                                    .otf .ttf  ====》  .css + .woff2
+                                <aside class="text-md py-4 text-gray-400">
+                                    .otf .ttf ====》 .css + .woff2
                                 </aside>
                                 <aside class="flex justify-center gap-4 py-4">
                                     <span class="rounded-md bg-green-600 px-2 text-sm text-white">
@@ -114,7 +110,7 @@ export const OnlineSplit = () => {
                                     </span>
                                     <a href="https://github.com/KonghaYao/cn-font-split">
                                         <img
-                                            src="https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge"
+                                            src="https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge"
                                             alt="JSDeliver Badge"
                                         />
                                     </a>
@@ -128,7 +124,7 @@ export const OnlineSplit = () => {
                         <div>
                             {file()!.name} | {prettyBytes(file()!.size)}
                         </div>
-                        <div class='flex gap-2'>
+                        <div class="flex gap-2">
                             <Show
                                 when={startSplit.isReady()}
                                 fallback={
@@ -171,7 +167,7 @@ export const OnlineSplit = () => {
             <section class="flex h-full flex-col gap-4 overflow-hidden bg-gray-200 p-4">
                 <header class="flex justify-between ">
                     <span class="text-xl">Logger 日志</span>
-                    <div class='flex-1'></div>
+                    <div class="flex-1"></div>
                     <a href="https://github.com/KonghaYao/cn-font-split/issues" target="_blank">
                         反馈
                     </a>
@@ -187,29 +183,24 @@ export const OnlineSplit = () => {
                 </Show>
                 <LogMessage logMessage={logMessage()}></LogMessage>
                 <header class="text-xl">Output 输出文件</header>
-                <section class='flex h-full  max-h-[100%] overflow-hidden bg-gray-800 font-sans text-sm text-gray-100 rounded-xl select-text '>
-
+                <section class="flex h-full  max-h-[100%] select-text overflow-hidden rounded-xl bg-gray-800 font-sans text-sm text-gray-100 ">
                     <FileList resultList={resultList()}></FileList>
                     <Show when={startSplit()}>
-                        <div class='flex flex-col rounded-xl bg-gray-700 p-2'>
+                        <div class="flex flex-col rounded-xl bg-gray-700 p-2">
                             <span>
                                 字体名称：
-                                {
-                                    startSplit().css.family
-                                }
+                                {startSplit().css.family}
                             </span>
                             <span>
                                 字重：
-                                {
-                                    startSplit().css.weight
-                                }
+                                {startSplit().css.weight}
                             </span>
                         </div>
                     </Show>
                 </section>
                 <span class="flex justify-end gap-4 text-xs text-green-600">
                     <span> 在您的代码里面直接引用 result.css 文件就好啦</span>
-                    <div class='flex-1'></div>
+                    <div class="flex-1"></div>
                     <span>{resultList().length}</span>
                     <span>
                         {prettyBytes(resultList().reduce((col, i) => i.buffer.byteLength + col, 0))}
@@ -238,7 +229,7 @@ function FileList(props: {
     }[];
 }) {
     return (
-        <ul class="flex h-full flex-1 max-h-[100%] flex-col-reverse overflow-scroll  p-4 ">
+        <ul class="flex h-full max-h-[100%] flex-1 flex-col-reverse overflow-scroll  p-4 ">
             <For each={[...props.resultList].reverse()}>
                 {(item) => {
                     return (

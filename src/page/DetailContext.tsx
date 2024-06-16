@@ -1,5 +1,5 @@
 import { createContext } from 'solid-js';
-import type { FontReporter } from '@konghayao/cn-font-split';
+import type { FontReporter } from 'cn-font-split';
 
 export interface DetailContextType {
     reporter: FontReporter;

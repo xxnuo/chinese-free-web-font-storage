@@ -6,7 +6,6 @@ import { DragDropButton } from '../DragButton';
 import { StringObjectToTable } from './Coverage/StringObjectToTable';
 import { UnicodeTable } from './Coverage/UnicodeTable';
 import { StandardAnalyzeTable } from './Coverage/StandardAnalyzeTable';
-import { GlyphInspector } from './Glyph/GlyphInspector';
 import { FeatureTable } from './Feature/FeatureTable';
 
 export type Result = Awaited<ReturnType<typeof FontAnalyze>>;
@@ -27,7 +26,7 @@ export const FontAnalyzeUI = () => {
             let buffer = await f()!.arrayBuffer();
             if (f().name.endsWith('.woff2')) {
                 const { convert } = await import(
-                    'https://jsdelivr.deno.dev/npm/@konghayao/cn-font-split/dist/browser/index.js'
+                    'https://jsdelivr.deno.dev/npm/cn-font-split/dist/browser/index.js'
                 );
                 buffer = await convert(new Uint8Array(buffer), 'truetype', 'woff2');
             }

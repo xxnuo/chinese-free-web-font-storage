@@ -2,7 +2,7 @@ import { ensureFontMessageString } from '../../utils/ensureFontMessageString';
 import { UnicodeRange } from '@japont/unicode-range';
 import { ECharts } from './ECharts';
 import { AsyncReporterLoader } from './AsyncReporterLoader';
-import type { NameTable } from '@konghayao/cn-font-split/dist/templates/reporter';
+import type { NameTable } from 'cn-font-split/dist/templates/reporter';
 /** 打包分片分析*/
 export const BundleSizeAnalyze = AsyncReporterLoader((props) => {
     const { data } = props.reporter;

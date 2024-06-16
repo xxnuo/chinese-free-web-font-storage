@@ -24,7 +24,7 @@ cn-font-split 拥有非凡的跨平台能力，其可以运行在 Nodejs 环境�
 1. 安装 cn-font-split
 
 ```sh
-npm i @konghayao/cn-font-split
+npm i cn-font-split
 npm i cn-font-split # or
 ```
 

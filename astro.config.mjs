@@ -17,7 +17,7 @@ export default defineConfig({
     output: 'static',
     vite: {
         optimizeDeps: {
-            exclude: ['@konghayao/cn-font-split'],
+            exclude: ['cn-font-split'],
         },
         build: { sourcemap: true },
         plugins: [

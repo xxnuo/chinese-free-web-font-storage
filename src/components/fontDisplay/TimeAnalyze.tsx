@@ -2,7 +2,7 @@ import { ensureFontMessageString } from '../../utils/ensureFontMessageString';
 import prettyBytes from 'pretty-bytes';
 import { ECharts } from './ECharts';
 import { AsyncReporterLoader } from './AsyncReporterLoader';
-import type { NameTable } from '@konghayao/cn-font-split/dist/templates/reporter';
+import type { NameTable } from 'cn-font-split/dist/templates/reporter';
 
 /** 打包时间分析 */
 export const TimeAnalyze = AsyncReporterLoader((props) => {

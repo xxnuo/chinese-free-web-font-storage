@@ -1,4 +1,4 @@
-import type { FontReporter } from '@konghayao/cn-font-split';
+import type { FontReporter } from 'cn-font-split';
 import { __CDN__ } from '../global';
 const cache = new Map<string, Promise<FontReporter>>();
 export const getFontReporter = (font: string, fileName: string) => {
