@@ -1,4 +1,4 @@
-import { fontSplit } from "@konghayao/cn-font-split";
+import { fontSplit } from "cn-font-split";
 import fse from "fs-extra";
 import md5 from "md5";
 import path from "path";

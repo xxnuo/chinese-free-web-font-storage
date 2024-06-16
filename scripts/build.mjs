@@ -1,4 +1,4 @@
-import { fontSplit } from "@konghayao/cn-font-split";
+import { fontSplit } from "cn-font-split";
 import fse from "fs-extra";
 import md5 from "md5";
 import path from "path";
@@ -39,7 +39,7 @@ for (const iterator of packages) {
     if (input.mode != "rebuild") {
         try {
             cacheData = fse.readJSONSync(`./packages/${iterator}/cache.json`);
-        } catch (e) { }
+        } catch (e) {}
 
         if (hash === cacheData.version_tag) {
             console.log(` 跳过 ${iterator}`);
@@ -69,7 +69,10 @@ for (const iterator of packages) {
         });
     }
 
-    if (input.mode !== "rebuild" || input.mode === 'rebuild' && input.version) {
+    if (
+        input.mode !== "rebuild" ||
+        (input.mode === "rebuild" && input.version)
+    ) {
         // 重写 package.json
         const packageData = fse.readJSONSync(
             `./packages/${iterator}/package.json`
@@ -82,14 +85,16 @@ for (const iterator of packages) {
             version_tag: hash,
         };
         if (input.time) {
-            const time = parseInt(input.time)
+            const time = parseInt(input.time);
             if (time > 0) {
-                cacheData.version = semver.inc(packageData.version, input.version ?? "patch")
+                cacheData.version = semver.inc(
+                    packageData.version,
+                    input.version ?? "patch"
+                );
             }
         }
 
-
-        console.log(cacheData.version)
+        console.log(cacheData.version);
         fse.writeJSONSync(`./packages/${iterator}/package.json`, {
             ...packageData,
             version: cacheData.version,
