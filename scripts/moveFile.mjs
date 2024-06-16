@@ -19,3 +19,5 @@ files.forEach((i) => {
 
     fs.copy(i, newPath);
 });
+
+fs.copy("./_headers", "./dist/_headers");
